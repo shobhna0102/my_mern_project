@@ -8,6 +8,9 @@ const profileSchema =new mongoose.Schema({
  company:{ 
      type:String
     },
+    website: {
+      type: String
+    },
  location:{
      type:String
     },
@@ -20,7 +23,7 @@ const profileSchema =new mongoose.Schema({
  bio:{
      type:String
     },
- gitthubusername:{
+ githubusername:{
      type:String
     },
  experience: [
