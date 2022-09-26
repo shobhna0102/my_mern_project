@@ -29,14 +29,7 @@ const validateUserProfileDetail=(profile)=>{
         bio:Joi.string(),
         githubusername:Joi.string(),
         experience:Joi.array(),
-        education:Joi.array().items(Joi.object({
-            school:Joi.string().required(),
-            degree:Joi.string().required(),
-            fieldofstudy:Joi.string().required(),
-            from:Joi.date().required(),
-            to:Joi.date(),
-            current:Joi.boolean(),
-            description:Joi.string() })) ,
+        education:Joi.array(),
         youtube:Joi.string(),
         twitter:Joi.string(),
         facebook:Joi.string(),
@@ -47,19 +40,31 @@ const validateUserProfileDetail=(profile)=>{
     });
     return schema.validate(profile);
 }
-const validateUserExperienceDetail=(profile)=>{
+const validateUserExperienceDetail=(exp)=>{
 
     const schema = Joi.object({
-         experience:Joi.array().items(Joi.object({
         title:Joi.string().required(),
+        company:Joi.string().required(),
         location:Joi.string(),
         from:Joi.date().required(),
         to:Joi.date(),
         current:Joi.boolean(),
-        description:Joi.string()})),
-         })
+        description:Joi.string()
+    })
+    return schema.validate(exp);
     }
 
+    const validateUserEducationDetail=(edu)=>{
+        const schema = Joi.object({
+        school:Joi.string().required(),
+        degree:Joi.string().required(),
+        fieldofstudy:Joi.string().required(),
+        from:Joi.date().required(),
+        to:Joi.date(),
+        current:Joi.boolean(),
+        description:Joi.string() })
 
+    return schema.validate(edu);
+    }
 
-module.exports ={validateUserDetail,validateUserAuthDetail,validateUserProfileDetail}
+module.exports ={validateUserDetail,validateUserAuthDetail,validateUserProfileDetail,validateUserExperienceDetail,validateUserEducationDetail}

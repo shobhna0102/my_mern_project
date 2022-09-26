@@ -6,6 +6,7 @@ const path = require('path');
 const indexRouter = require('./routes/user');
 const authRouter=require('./routes/auth')
 const profileRouter=require('./routes/profile')
+const postRouter=require('./routes/posts')
 
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', indexRouter);
 app.use('/api', authRouter);
 app.use('/api', profileRouter);
+app.use('/api', postRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

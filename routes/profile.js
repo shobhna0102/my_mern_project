@@ -3,7 +3,7 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 const profiles = require("../models/profile-model");
 const UserModel = require("../models/user-model");
-const { validateUserProfileDetail } = require("../validation/user-validation");
+const { validateUserProfileDetail,validateUserExperienceDetail,validateUserEducationDetail } = require("../validation/user-validation");
 
 
 // @route    GET api/myprofile
@@ -154,36 +154,90 @@ router.delete("/deletemyprofile",auth,async (req, res) => {
 
 
 
-// @route    PUT api/profile/experience
+
+// @route    PUT api/experience
 // @desc     Add profile experience
 // @access   Private
-router.put('/addexperience',
-    auth,
-    check('title', 'Title is required').notEmpty(),
-    check('company', 'Company is required').notEmpty(),
-    check('from', 'From date is required and needs to be from the past')
-      .notEmpty()
-      .custom((value, { req }) => (req.body.to ? value < req.body.to : true)),
-    async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-  
-      try {
-        const profile = await Profile.findOne({ user: req.user.id });
-  
-        profile.experience.unshift(req.body);
-  
-        await profile.save();
-  
-        res.json(profile);
-      } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
-      }
+router.put('/addexperience',auth,async (req, res) => {
+    const { error } = validateUserExperienceDetail(req.body);
+    if (error) {
+      return res.status(400).json(error.details[0].message);
     }
+    const {title,company,location,from,to,current,destination}=req.body;
+    const newExp={title,company,location,from,to,current,destination}
+    try {
+      const profile= await profiles.findOne({user:req.user.id});
+      profile.experience.unshift(newExp);
+     await profile.save();
+     res.json(profile);
+
+      
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+    }
+
+})
+
+// @route    DELETE api/deleteexperience
+// @desc     Delete profile experience
+// @access   Private
+router.delete('/deleteexperience/:exp_id',auth,async(req, res) => {
+  try {
+    const foundProfile = await profiles.findOne({ user: req.user.id });
+    foundProfile.experience = foundProfile.experience.filter(
+      (exp) => exp._id.toString() !== req.params.exp_id
+    );
+    await foundProfile.save();
+    return res.status(200).json({msg:"Experience deleted successfuly.."});
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+
+// @route    PUT api/addeducation
+// @desc     add profile experience
+// @access   Private
+router.put('/addeducation',auth,async (req, res) => {
+  const { error } = validateUserEducationDetail(req.body);
+  if (error) {
+    return res.status(400).json(error.details[0].message);
+  }
+  const {school,degree,fieldofstudy,from,to,current,destination}=req.body;
+  const newEdu={school,degree,fieldofstudy,from,to,current,destination}
+  try {
+    const profile= await profiles.findOne({user:req.user.id});
+    profile.education.unshift(newEdu);
+   await profile.save();
+   res.json(profile);
+  
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+
+})
+
+// @route    DELETE api/deleteeducation
+// @desc     Delete profile education
+// @access   Private
+router.delete('/deleteeducation/:edu_id',auth,async(req, res) => {
+try {
+  const foundProfile = await profiles.findOne({ user: req.user.id });
+  foundProfile.education = foundProfile.education.filter(
+    (edu) => edu._id.toString() !== req.params.edu_id
   );
+  await foundProfile.save();
+  return res.status(200).json({msg:"Education deleted successfuly.."});
+} catch (error) {
+  console.error(error);
+  return res.status(500).json({ msg: 'Server error' });
+}
+});
+
+
 
 
 module.exports = router;
