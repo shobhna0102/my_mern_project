@@ -12,4 +12,16 @@ comments:Joi.array()})
 
 return schema.validate(post);
 }
-module.exports={validatePostDetail}
+
+const validatePostCommentDetail=(cmnt)=>{
+    const schema = Joi.object({
+    user:Joi.string(),
+    text:Joi.string().required(),
+    name:Joi.string(),
+    avatar:Joi.string(),
+    date:Joi.date()})
+
+return schema.validate(cmnt);
+}
+
+module.exports={validatePostDetail,validatePostCommentDetail}

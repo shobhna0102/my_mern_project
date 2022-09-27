@@ -227,7 +227,7 @@ router.delete('/deleteeducation/:edu_id',auth,async(req, res) => {
 try {
   const foundProfile = await profiles.findOne({ user: req.user.id });
   foundProfile.education = foundProfile.education.filter(
-    (edu) => edu._id.toString() !== req.params.edu_id
+    (edu) => edu._id.toString()!== req.params.edu_id
   );
   await foundProfile.save();
   return res.status(200).json({msg:"Education deleted successfuly.."});
